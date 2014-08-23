@@ -7,9 +7,10 @@ require 'accountant/account'
 require 'accountant/journal'
 require 'accountant/line'
 require 'accountant/active_record/extensions'
-require 'accountant/global_account'
-require 'accountant/manually_created_account'
 
 ActiveRecord::Base.class_eval do
   include ActsAsAccount::ActiveRecordExtension
 end
+
+require 'accountant/global_account'
+require 'accountant/manually_created_account'
