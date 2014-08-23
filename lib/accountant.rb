@@ -6,7 +6,7 @@ require 'accountant/transfer'
 require 'accountant/account'
 require 'accountant/journal'
 require 'accountant/line'
-require 'accountant/active_record_extensions'
+require 'accountant/active_record/extensions'
 require 'accountant/global_account'
 require 'accountant/manually_created_account'
 
