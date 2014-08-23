@@ -9,7 +9,7 @@ require 'accountant/line'
 require 'accountant/active_record/extensions'
 
 ActiveRecord::Base.class_eval do
-  include ActsAsAccount::ActiveRecordExtension
+  include Accountant::ActiveRecordExtension
 end
 
 require 'accountant/global_account'
