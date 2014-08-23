@@ -1,5 +1,15 @@
-require "accountant/version"
+require 'active_record'
+require 'action_controller'
 
-module Accountant
-  # Your code goes here...
+require 'accountant/version'
+require 'accountant/transfer'
+require 'accountant/account'
+require 'accountant/journal'
+require 'accountant/posting'
+require 'accountant/active_record_extensions'
+require 'accountant/global_account'
+require 'accountant/manually_created_account'
+
+ActiveRecord::Base.class_eval do
+  include ActsAsAccount::ActiveRecordExtension
 end
