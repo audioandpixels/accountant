@@ -13,7 +13,7 @@ module Accountant
         sql = <<-SQL
         SELECT
         account_id as id,
-          count(*) as calculated_postings_count,
+          count(*) as calculated_line_count,
           sum(amount) as calculated_balance,
           max(valuta) as calculated_valuta
         FROM
@@ -27,7 +27,7 @@ module Accountant
         Accountant::Account.find_by_sql(sql).each do |account|
           account.lock!
           account.update_attributes(balance: account.calculated_balance,
-                                    line_count: account.calculated_postings_count,
+                                    line_count: account.calculated_line_count,
                                     last_valuta: account.calculated_valuta)
         end
       end

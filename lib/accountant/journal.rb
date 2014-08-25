@@ -2,7 +2,7 @@ module Accountant
   class Journal < ActiveRecord::Base
     self.table_name = :accountant_journals
 
-    has_many :postings, class_name: 'Accountant::Posting'
+    has_many :lines, class_name: 'Accountant::Line'
     has_many :accounts, through: :lines
 
     class << self
@@ -36,23 +36,23 @@ module Accountant
         # the same therfore the sort by id.
         [from_account, to_account].sort_by(&:id).map(&:lock!)
 
-        add_posting(-amount,  from_account,   to_account, reference, valuta)
-        add_posting( amount,    to_account, from_account, reference, valuta)
+        add_line(-amount,  from_account,   to_account, reference, valuta)
+        add_line( amount,    to_account, from_account, reference, valuta)
       end
     end
 
     private
 
-    def add_posting(amount, account, other_account, reference, valuta)
-      posting = postings.build(amount: amount,
-                               account: account,
-                               other_account: other_account,
-                               reference: reference,
-                               valuta: valuta)
+    def add_line(amount, account, other_account, reference, valuta)
+      line = lines.build(amount: amount,
+                         account: account,
+                         other_account: other_account,
+                         reference: reference,
+                         valuta: valuta)
 
       account.class.update_counters(account.id, line_count: 1, balance: line.amount)
 
-      posting.save(validate: false)
+      line.save(validate: false)
       account.save(validate: false)
     end
   end

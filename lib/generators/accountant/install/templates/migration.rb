@@ -7,7 +7,7 @@ class CreateAccountantTables < ActiveRecord::Migration
       t.string   "name", :null => false
 
       t.integer  "balance", :default => 0
-      t.integer  "postings_count", :default => 0
+      t.integer  "lines_count", :default => 0
       t.datetime "last_valuta"
 
       t.datetime "created_at"

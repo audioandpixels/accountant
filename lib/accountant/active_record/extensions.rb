@@ -20,7 +20,7 @@ module Accountant
       end
 
       def is_reference
-        has_many :postings, class_name: "Accountant::Posting", as: :reference
+        has_many :lines, class_name: "Accountant::Line", as: :reference
         class_eval do
           def booked?
             lines.any?
