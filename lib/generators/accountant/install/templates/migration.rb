@@ -44,25 +44,6 @@ class CreateAccountantTables < ActiveRecord::Migration
     create_table "accountant_global_accounts", :force => true do |t|
       t.string   "name", :null => false
     end
-
-    create_table "users", :force => true do |t|
-      t.string   "name", :null => false
-      t.datetime "created_at"
-      t.datetime "updated_at"
-    end
-
-    create_table "abstract_users", :force => true do |t|
-      t.string   "name", :null => false
-      t.string   "type", :null => false
-      t.datetime "created_at"
-      t.datetime "updated_at"
-    end
-
-    create_table "cheques", :force => true do |t|
-      t.string "number"
-      t.datetime "created_at"
-      t.datetime "updated_at"
-    end
   end
 
   def self.down
