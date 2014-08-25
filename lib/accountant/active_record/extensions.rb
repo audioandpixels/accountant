@@ -31,7 +31,7 @@ module Accountant
       def has_global_account(name)
         class_eval do
           def account
-            Accountant::Account.for(:#{name})
+            Accountant::Account.for(name.to_sym)
           end
         end
       end
