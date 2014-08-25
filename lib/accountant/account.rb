@@ -2,15 +2,15 @@ module Accountant
   class Account < ActiveRecord::Base
     self.table_name = :accountant_accounts
 
-    belongs_to :holder, :polymorphic => true
-    has_many :lines, :class_name => 'Accountant::Line'
-    has_many :journals, :through => :lines
+    belongs_to :holder, polymorphic: true
+    has_many :lines, class_name: 'Accountant::Line'
+    has_many :journals, through: :lines
 
     class << self
 
       def recalculate_all_balances
         Accountant::Account.update_all(balance: 0, line_count: 0, last_valuta: nil)
-        sql = <<-EOT
+        sql = <<-SQL
         SELECT
         account_id as id,
           count(*) as calculated_postings_count,
@@ -22,14 +22,13 @@ module Accountant
         account_id
         HAVING
         calculated_line_count > 0
-        EOT
+        SQL
 
-        ActsAsAccount::Account.find_by_sql(sql).each do |account|
+        Accountant::Account.find_by_sql(sql).each do |account|
           account.lock!
-          account.update_attributes(
-            balance: account.calculated_balance,
-            line_count: account.calculated_postings_count,
-          last_valuta: account.calculated_valuta)
+          account.update_attributes(balance: account.calculated_balance,
+                                    line_count: account.calculated_postings_count,
+                                    last_valuta: account.calculated_valuta)
         end
       end
 
