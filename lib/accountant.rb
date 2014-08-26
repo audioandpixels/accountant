@@ -14,3 +14,4 @@ end
 
 require 'accountant/global_account'
 require 'accountant/manually_created_account'
+require 'money-rails'
