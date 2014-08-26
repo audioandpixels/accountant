@@ -6,6 +6,8 @@ module Accountant
     has_many :lines, class_name: 'Accountant::Line'
     has_many :journals, through: :lines
 
+    monetize :balance_money, as: "balance"
+
     class << self
 
       def recalculate_all_balances

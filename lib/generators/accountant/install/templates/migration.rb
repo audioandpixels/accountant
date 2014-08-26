@@ -5,11 +5,9 @@ class CreateAccountantTables < ActiveRecord::Migration
       t.integer  "holder_id", :null => false
       t.string   "holder_type", :null => false
       t.string   "name", :null => false
-
-      t.integer  "balance", :default => 0
+      t.integer  "balance_money", :default => 0
       t.integer  "line_count", :default => 0
       t.datetime "last_valuta"
-
       t.datetime "created_at"
       t.datetime "updated_at"
     end
@@ -25,13 +23,10 @@ class CreateAccountantTables < ActiveRecord::Migration
       t.integer "account_id", :null => false
       t.integer "other_account_id", :null => false
       t.integer "journal_id", :null => false
-      t.integer "amount", :null => false
-
+      t.integer "amount_money", :null => false
       t.integer "reference_id"
       t.string "reference_type"
-
       t.datetime "valuta"
-
       t.datetime "created_at"
       t.datetime "updated_at"
     end
