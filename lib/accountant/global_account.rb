@@ -1,7 +1,5 @@
-module Accountant
-  class GlobalAccount < ActiveRecord::Base
-    self.table_name = :accountant_global_accounts
+class Accountant::GlobalAccount < ActiveRecord::Base
+  self.table_name = :accountant_global_accounts
 
-    has_account
-  end
+  has_account
 end
