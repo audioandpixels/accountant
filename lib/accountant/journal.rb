@@ -50,7 +50,7 @@ module Accountant
                          reference: reference,
                          valuta: valuta)
 
-      account.class.update_counters(account.id, line_count: 1, balance: line.amount)
+      account.class.update_counters(account.id, line_count: 1, balance_money: line.amount_money)
 
       line.save(validate: false)
       account.save(validate: false)
