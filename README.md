@@ -3,9 +3,8 @@
 Give your app financial accounts, easily transfer money between them and generate reports all backed by auditable double entry records.
 
 Heavly inspired by:
-
-https://github.com/betterplace/acts_as_account
-https://github.com/envato/double_entry
+* acts_as_account https://github.com/betterplace/acts_as_account)
+* double_entry https://github.com/envato/double_entry
 
 ## Installation
 
