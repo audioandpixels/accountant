@@ -7,7 +7,6 @@ module Accountant
     belongs_to :journal,       class_name: 'Accountant::Journal'
     belongs_to :reference, polymorphic: true
 
-    monetize :amount_money, as: "amount"
-
+    monetize :amount_money, as: 'amount'
   end
 end
