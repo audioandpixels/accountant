@@ -1,6 +1,10 @@
 # Accountant
 
-TODO: Write a gem description
+Give your app finacial accounts, easily transfer money between them and generate reports all backed by auditable double entry records.
+
+Heavly inspired by:
+https://github.com/betterplace/acts_as_account
+https://github.com/envato/double_entry
 
 ## Installation
 
@@ -18,9 +22,12 @@ Or install it yourself as:
 
     $ gem install accountant
 
+Generate config and migrations:
+    
+    $ rails g accountant:install
+
 ## Usage
 
-TODO: Write usage instructions here
 
 ## Contributing
 

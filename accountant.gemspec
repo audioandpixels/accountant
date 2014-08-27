@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.version       = Accountant::VERSION
   spec.authors       = ["Jason Cox"]
   spec.email         = ["jason@audioandpixels.com"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
-  spec.homepage      = ""
+  spec.summary       = %q{Financial accounts and reporting backed by double entry records.}
+  spec.description   = %q{Give your app finacial accounts, easily transfer money between them and generate reports all backed by auditable double entry records.}
+  spec.homepage      = "https://github.com/audioandpixels/accountant"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
