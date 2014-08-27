@@ -1,8 +1,9 @@
 # Accountant
 
-Give your app finacial accounts, easily transfer money between them and generate reports all backed by auditable double entry records.
+Give your app financial accounts, easily transfer money between them and generate reports all backed by auditable double entry records.
 
 Heavly inspired by:
+
 https://github.com/betterplace/acts_as_account
 https://github.com/envato/double_entry
 
