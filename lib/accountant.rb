@@ -9,7 +9,8 @@ require 'accountant/transfer'
 require 'accountant/account'
 require 'accountant/journal'
 require 'accountant/line'
-require 'accountant/active_record/extensions'
+require 'accountant/active_record/account_extensions'
+require 'accountant/active_record/locking_extensions'
 
 ActiveRecord::Base.class_eval do
   include Accountant::ActiveRecord::AccountExtensions
