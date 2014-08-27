@@ -12,7 +12,8 @@ require 'accountant/line'
 require 'accountant/active_record/extensions'
 
 ActiveRecord::Base.class_eval do
-  include Accountant::ActiveRecordExtension
+  include Accountant::ActiveRecord::AccountExtensions
+  include Accountant::ActiveRecord::LockingExtensions
 end
 
 require 'accountant/global_account'
