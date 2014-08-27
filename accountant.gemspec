@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Jason Cox"]
   spec.email         = ["jason@audioandpixels.com"]
   spec.summary       = %q{Financial accounts and reporting backed by double entry records.}
-  spec.description   = %q{Give your app finacial accounts, easily transfer money between them and generate reports all backed by auditable double entry records.}
+  spec.description   = %q{Give your app financial accounts, easily transfer money between them and generate reports all backed by auditable double entry records.}
   spec.homepage      = "https://github.com/audioandpixels/accountant"
   spec.license       = "MIT"
 
