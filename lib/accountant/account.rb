@@ -9,7 +9,7 @@ class Accountant::Account < ActiveRecord::Base
   class << self
 
     def for(name)
-      GlobalAccount.find_or_create_by(name: name).account
+      Accountant::GlobalAccount.find_or_create_by(name: name).account
     end
 
     def create!(attributes = nil)

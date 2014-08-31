@@ -12,15 +12,22 @@ require 'accountant/active_record/account_extensions'
 require 'accountant/active_record/locking_extensions'
 
 ActiveRecord::Base.class_eval do
-  include Accountant::ActiveRecord::AccountExtensions
-  include Accountant::ActiveRecord::LockingExtensions
+  include ActiveRecord::AccountExtensions
+  include ActiveRecord::LockingExtensions
 end
 
 require 'accountant/global_account'
 require 'accountant/manually_created_account'
 
-class Accountant
-  def self.transfer(amount, from_account, to_account, reference = nil)
-    Acountant::Transfer.new.transfer(amount, from_account, to_account, reference = nil)
+module Accountant
+  class << self
+    
+    def transfer(amount, from_account, to_account, reference = nil)
+      Accountant::Transfer.new.transfer(amount, from_account, to_account, reference = nil)
+    end
+
+    def multi_transfer(*accounts, &block)
+      Accountant::Transfer.new.multi_transfer(*accounts, &block)
+    end
   end
 end

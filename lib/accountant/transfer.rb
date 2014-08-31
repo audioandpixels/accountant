@@ -1,23 +1,28 @@
 class Accountant::Transfer
 
-  def lock_accounts(*accounts)
+  def multi_transfer(*accounts)
+    @@locks = Hash.new
     outermost_transaction!
 
-    restartable_transaction do
-      [accounts].sort_by(&:id).map(&:lock!)
+    ActiveRecord::Base.restartable_transaction do
+      self.locks = accounts.sort_by(&:id).map(&:lock!)
       yield
     end
 
-    # Does this need to be ensured?
-    clear_current
+    remove_locks
   end
 
   def transfer(amount, from_account, to_account, reference = nil)
-    outermost_transaction!
-
-    restartable_transaction do
-      [from_account, to_account].sort_by(&:id).map(&:lock!)
+    if locked_transaction?
+      [from_account, to_account].each {|ac| locked!(ac)}
       perform(amount, from_account, to_account, reference)
+    else
+      outermost_transaction!
+
+      ActiveRecord::Base.restartable_transaction do
+        [from_account, to_account].sort_by(&:id).map(&:lock!)
+        perform(amount, from_account, to_account, reference)
+      end
     end
   end
 
@@ -51,6 +56,29 @@ class Accountant::Transfer
     end
   end
 
+  def locks
+    @@locks[Thread.current.object_id]
+  end
+
+  def locks=(locks)
+    @@locks[Thread.current.object_id] = locks
+  end
+
+  def remove_locks
+    @@locks.delete(Thread.current.object_id)
+  end
+
+  def locked!(account)
+    raise AccountNotLocked if !locks.include?(account)
+  end
+
+  def locked_transaction?
+    !locks.nil?
+  end
+
   class MustBeOutermostTransaction < RuntimeError
+  end
+
+  class AccountNotLocked < RuntimeError
   end
 end
