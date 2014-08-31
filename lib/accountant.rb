@@ -12,8 +12,8 @@ require 'accountant/active_record/account_extensions'
 require 'accountant/active_record/locking_extensions'
 
 ActiveRecord::Base.class_eval do
-  include ActiveRecord::AccountExtensions
-  include ActiveRecord::LockingExtensions
+  include Accountant::ActiveRecord::AccountExtensions
+  include Accountant::ActiveRecord::LockingExtensions
 end
 
 require 'accountant/global_account'
