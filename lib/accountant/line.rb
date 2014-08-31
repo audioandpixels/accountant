@@ -3,7 +3,6 @@ class Accountant::Line < ActiveRecord::Base
 
   belongs_to :account,       class_name: 'Accountant::Account'
   belongs_to :other_account, class_name: 'Accountant::Account'
-  belongs_to :journal,       class_name: 'Accountant::Journal'
   belongs_to :reference, polymorphic: true
 
   monetize :amount_money, as: 'amount'

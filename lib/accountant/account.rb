@@ -3,35 +3,10 @@ class Accountant::Account < ActiveRecord::Base
 
   belongs_to :holder, polymorphic: true
   has_many :lines, class_name: 'Accountant::Line'
-  has_many :journals, through: :lines
 
   monetize :balance_money, as: 'balance'
 
   class << self
-
-    def recalculate_all_balances
-      Accountant::Account.update_all(balance: 0, line_count: 0, last_valuta: nil)
-      sql = <<-SQL
-      SELECT
-      account_id as id,
-        count(*) as calculated_line_count,
-        sum(amount) as calculated_balance,
-        max(valuta) as calculated_valuta
-      FROM
-      accountant_lines
-      GROUP BY
-      account_id
-      HAVING
-      calculated_line_count > 0
-      SQL
-
-      Accountant::Account.find_by_sql(sql).each do |account|
-        account.lock!
-        account.update_attributes(balance: account.calculated_balance,
-                                  line_count: account.calculated_line_count,
-                                  last_valuta: account.calculated_valuta)
-      end
-    end
 
     def for(name)
       GlobalAccount.find_or_create_by(name: name).account
@@ -76,6 +51,6 @@ class Accountant::Account < ActiveRecord::Base
   end
 
   def deleteable?
-    lines.empty? && journals.empty?
+    lines.empty?
   end
 end

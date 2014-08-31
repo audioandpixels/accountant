@@ -7,7 +7,6 @@ MoneyRails::Hooks.init
 require 'accountant/version'
 require 'accountant/transfer'
 require 'accountant/account'
-require 'accountant/journal'
 require 'accountant/line'
 require 'accountant/active_record/account_extensions'
 require 'accountant/active_record/locking_extensions'
@@ -19,3 +18,9 @@ end
 
 require 'accountant/global_account'
 require 'accountant/manually_created_account'
+
+class Accountant
+  def self.transfer(amount, from_account, to_account, reference = nil)
+    Acountant::Transfer.new.transfer(amount, from_account, to_account, reference = nil)
+  end
+end
