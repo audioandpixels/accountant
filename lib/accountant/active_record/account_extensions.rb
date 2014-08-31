@@ -4,15 +4,15 @@ module Accountant
       def self.included(base)
         base.extend ClassMethods
         base.class_eval do
-          def account(name = :default)
-            __send__("#{name}_account") || __send__("create_#{name}_account", name: name.to_s)
+          def account(name=:default, negative=true )
+            __send__("#{name}_account") || __send__("create_#{name}_account", name: name.to_s, negative: negative)
           end
         end
       end
 
       module ClassMethods
 
-        def has_account(name = :default)
+        def has_account(name=:default)
           has_one :"#{name}_account", -> { where name: name }, class_name: "Accountant::Account", as: :holder
 
           unless instance_methods.include?('accounts')

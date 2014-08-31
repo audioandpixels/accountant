@@ -2,11 +2,12 @@ class CreateAccountantTables < ActiveRecord::Migration
 
   def self.up
     create_table "accountant_accounts", force: true do |t|
-      t.integer  "holder_id",                 null: false
-      t.string   "holder_type",               null: false
-      t.string   "name",                      null: false
-      t.integer  "balance_money", default: 0, null: false
+      t.integer  "holder_id",                    null: false
+      t.string   "holder_type",                  null: false
+      t.string   "name",                         null: false
+      t.integer  "balance_money", default: 0,    null: false
       t.integer  "line_count",    default: 0
+      t.boolean  "negative",      default: true, null: false
       t.datetime "created_at"
       t.datetime "updated_at"
     end
