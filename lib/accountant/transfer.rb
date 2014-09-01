@@ -1,4 +1,5 @@
 class Accountant::Transfer
+  @@locks = {}
 
   def multi_transfer(*accounts)
     @@locks = Hash.new
@@ -46,6 +47,8 @@ class Accountant::Transfer
 
     account.class.update_counters(account.id, line_count: 1, balance_money: line.amount_money)
 
+    balance_negative!(account)
+
     line.save(validate: false)
     account.save(validate: false)
   end
@@ -53,6 +56,12 @@ class Accountant::Transfer
   def outermost_transaction!
     unless Accountant::Account.connection.open_transactions.zero?
       raise MustBeOutermostTransaction
+    end
+  end
+
+  def balance_negative!(account)
+    if !account.negative and account.balance < Money.new(0)
+      raise AccountCannotBeNegative
     end
   end
 
@@ -80,5 +89,8 @@ class Accountant::Transfer
   end
 
   class AccountNotLocked < RuntimeError
+  end
+
+  class AccountCannotBeNegative < RuntimeError
   end
 end
