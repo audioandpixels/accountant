@@ -60,7 +60,7 @@ class Accountant::Transfer
   end
 
   def balance_negative!(account)
-    if !account.negative and account.balance < Money.new(0)
+    if !account.negative and account.reload.balance < Money.new(0)
       raise AccountCannotBeNegative
     end
   end
