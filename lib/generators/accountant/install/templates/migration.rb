@@ -7,7 +7,6 @@ class CreateAccountantTables < ActiveRecord::Migration
       t.string   "name",                         null: false
       t.integer  "balance_money", default: 0,    null: false
       t.integer  "line_count",    default: 0
-      t.boolean  "negative",      default: true, null: false
       t.datetime "created_at"
       t.datetime "updated_at"
     end

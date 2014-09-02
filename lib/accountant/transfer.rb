@@ -60,7 +60,9 @@ class Accountant::Transfer
   end
 
   def balance_negative!(account)
-    if !account.negative and account.reload.balance < Money.new(0)
+    raise ConfigNotLoaded if account.config.nil?
+
+    if !account.config[:negative] and account.reload.balance < Money.new(0)
       raise AccountCannotBeNegative
     end
   end
@@ -83,6 +85,9 @@ class Accountant::Transfer
 
   def locked_transaction?
     !locks.nil?
+  end
+
+  class ConfigNotLoaded < RuntimeError
   end
 
   class MustBeOutermostTransaction < RuntimeError
