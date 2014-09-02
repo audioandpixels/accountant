@@ -35,8 +35,8 @@ class Accountant::Transfer
       amount, from_account, to_account = -amount, to_account, from_account
     end
 
-    add_line(-amount,  from_account,   to_account, reference)
-    add_line( amount,    to_account, from_account, reference)
+    add_line(-amount, from_account,   to_account, reference)
+    add_line( amount,   to_account, from_account, reference)
   end
 
   def add_line(amount, account, other_account, reference)
