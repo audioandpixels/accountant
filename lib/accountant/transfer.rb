@@ -13,7 +13,7 @@ class Accountant::Transfer
     remove_locks
   end
 
-  def transfer(amount, from_account, to_account, *args)
+  def transfer(amount, from_account, to_account, args)
     options = args.extract_options!
     
     if locked_transaction?
@@ -37,15 +37,16 @@ class Accountant::Transfer
       amount, from_account, to_account = -amount, to_account, from_account
     end
 
-    add_line(-amount, from_account,   to_account, reference)
-    add_line( amount,   to_account, from_account, reference)
+    add_line(-amount, from_account,   to_account, reference, description)
+    add_line( amount,   to_account, from_account, reference, description)
   end
 
-  def add_line(amount, account, other_account, reference)
+  def add_line(amount, account, other_account, reference, description)
     line = Accountant::Line.new(amount: amount,
                                 account: account,
                                 other_account: other_account,
-                                reference: reference)
+                                reference: reference,
+                                description: description)
 
     account.class.update_counters(account.id, line_count: 1, balance_money: line.amount_money)
 

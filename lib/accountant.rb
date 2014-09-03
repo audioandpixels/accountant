@@ -22,8 +22,8 @@ require 'accountant/manually_created_account'
 module Accountant
   class << self
     
-    def transfer(amount, from_account, to_account, reference = nil)
-      Accountant::Transfer.new.transfer(amount, from_account, to_account, reference = nil)
+    def transfer(amount, from_account, to_account, *args)
+      Accountant::Transfer.new.transfer(amount, from_account, to_account, args)
     end
 
     def multi_transfer(*accounts, &block)
