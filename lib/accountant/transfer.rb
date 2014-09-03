@@ -13,23 +13,25 @@ class Accountant::Transfer
     remove_locks
   end
 
-  def transfer(amount, from_account, to_account, reference = nil)
+  def transfer(amount, from_account, to_account, *args)
+    options = args.extract_options!
+    
     if locked_transaction?
       [from_account, to_account].each {|ac| locked!(ac)}
-      perform(amount, from_account, to_account, reference)
+      perform(amount, from_account, to_account, options[:reference], options[:description])
     else
       outermost_transaction!
 
       ActiveRecord::Base.restartable_transaction do
         [from_account, to_account].sort_by(&:id).map(&:lock!)
-        perform(amount, from_account, to_account, reference)
+        perform(amount, from_account, to_account, options[:reference], options[:description])
       end
     end
   end
 
   private
 
-  def perform(amount, from_account, to_account, reference)
+  def perform(amount, from_account, to_account, reference, description)
     if (amount < 0)
       # Change order if amount is negative
       amount, from_account, to_account = -amount, to_account, from_account

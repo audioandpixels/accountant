@@ -19,6 +19,7 @@ class CreateAccountantTables < ActiveRecord::Migration
       t.integer  "amount_money",     default: 0,  null: false
       t.integer  "reference_id"
       t.string   "reference_type"
+      t.string   "description"
       t.datetime "created_at"
       t.datetime "updated_at"
     end
