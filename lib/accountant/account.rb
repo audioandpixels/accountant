@@ -46,7 +46,7 @@ class Accountant::Account < ActiveRecord::Base
               holder_id: attributes[:holder_id],
               name: attributes[:name]).first
       end
-      record || raise "Cannot find or create account with attributes #{attributes.inspect}"
+      record || raise("Cannot find or create account with attributes #{attributes.inspect}")
     end
   end
 
