@@ -37,7 +37,7 @@ class Accountant::Account < ActiveRecord::Base
     def find_on_error(attributes)
       yield
 
-      # Trying to create a duplicate key on a unique index raises StatementInvalid
+    # Trying to create a duplicate key on a unique index raises StatementInvalid
     rescue ActiveRecord::StatementInvalid => e
       record = if attributes[:holder]
         attributes[:holder].account(attributes[:name])
@@ -68,5 +68,6 @@ class Accountant::Account < ActiveRecord::Base
 end
 
 class Accountant::GroupedLines < Struct.new(:date, :amount_money, :count)
+  include MoneyRails::ActiveRecord::Monetizable
   monetize :amount_money, as: 'amount'
 end
