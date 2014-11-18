@@ -74,7 +74,7 @@ end
 class Accountant::GroupedLines < Struct.new(:date, :amount_money, :count)
 
   def amount
-    amount_money.to_money
+    Money.new(amount_money)
   end
 
 end
