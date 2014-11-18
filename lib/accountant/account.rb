@@ -55,14 +55,18 @@ class Accountant::Account < ActiveRecord::Base
   end
 
   def aggregate_lines_by_day(n_days)
-    sums = lines.group_by_day(:created_at, range: n_days.ago..Time.now).sum(:amount_money)
-    counts = lines.group_by_day(:created_at, range: n_days.ago..Time.now).count
+    sums = lines.group_by_day(:created_at, range: n_days.days.ago..Time.now).sum(:amount_money)
+    counts = lines.group_by_day(:created_at, range: n_days.days.ago..Time.now).count
 
     raise "Aggregate keys do not match" if sums.keys != counts.keys
 
-    sums.keys.map do |date|
-      Accountant::GroupedLines.new(date: date, amount_money:sums[date], count: counts[date])
+    grouped_lines = []
+    sums.keys.each do |date|
+      next if counts[date].zero?
+      grouped_lines << Accountant::GroupedLines.new(date, sums[date], counts[date])
     end
+
+    grouped_lines
   end
 
 end
