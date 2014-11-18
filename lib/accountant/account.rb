@@ -46,7 +46,7 @@ class Accountant::Account < ActiveRecord::Base
               holder_id: attributes[:holder_id],
               name: attributes[:name]).first
       end
-      record || raise("Cannot find or create account with attributes #{attributes.inspect}")
+      record || raise "Cannot find or create account with attributes #{attributes.inspect}"
     end
   end
 
@@ -54,42 +54,19 @@ class Accountant::Account < ActiveRecord::Base
     lines.empty?
   end
 
-  # TODO: Rework into SQL?
   def aggregate_lines_by_day(n_days)
-    range = n_days.days.ago..Time.now
-    descriptions = lines.where(created_at: range).pluck('DISTINCT description')
-    
-    group_aggregate_data(range, descriptions)
-  end
+    grouped_lines = lines.group_by_day(:created_at, range: n_days.days.ago..Time.now).group(:description)
+    sums = grouped_lines.sum(:amount_money).to_a
 
-  private
-
-  def group_aggregate_data(range, descriptions)
-    data = {}
-
-    descriptions.each do |desc|
-      data[desc] = { 'sums' => lines.where(description: desc).group_by_day(:created_at, range: range).sum(:amount_money),
-                     'counts' => lines.where(description: desc).group_by_day(:created_at, range: range).count }
-    end
-
-    group_lines(data)
-  end
-
-  def group_lines(data)
-    grouped_lines = []
-    data.values[0]['sums'].keys.each do |date|
-      data.keys.each do |desc|
-        next if data[desc]['counts'][date].zero?
-        grouped_lines << Accountant::GroupedLines.new(date, desc, data[desc]['sums'][date], data[desc]['counts'][date])
-      end
-    end
-
-    grouped_lines
+    grouped_lines.count.each_with_index.map do |count, i|
+      next if count[1].zero?
+      Accountant::AggregateLine.new(count[0][0], count[0][1], sums[i][1], count[1])
+    end.compact
   end
 
 end
 
-class Accountant::GroupedLines < Struct.new(:date, :description, :amount_money, :count)
+class Accountant::AggregateLine < Struct.new(:date, :description, :amount_money, :count)
 
   def amount
     Money.new(amount_money)
