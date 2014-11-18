@@ -54,16 +54,34 @@ class Accountant::Account < ActiveRecord::Base
     lines.empty?
   end
 
+  # TODO: Rework into SQL?
   def aggregate_lines_by_day(n_days)
-    sums = lines.group_by_day(:created_at, range: n_days.days.ago..Time.now).sum(:amount_money)
-    counts = lines.group_by_day(:created_at, range: n_days.days.ago..Time.now).count
+    range = n_days.days.ago..Time.now
+    descriptions = lines.where(created_at: range).pluck('DISTINCT description')
+    
+    group_aggregate_data(range, descriptions)
+  end
 
-    raise "Aggregate keys do not match" if sums.keys != counts.keys
+  private
 
+  def group_aggregate_data(range, descriptions)
+    data = {}
+
+    descriptions.each do |desc|
+      data[desc] = { 'sums' => lines.where(description: desc).group_by_day(:created_at, range: range).sum(:amount_money),
+                     'counts' => lines.where(description: desc).group_by_day(:created_at, range: range).count }
+    end
+
+    group_lines(data)
+  end
+
+  def group_lines(data)
     grouped_lines = []
-    sums.keys.each do |date|
-      next if counts[date].zero?
-      grouped_lines << Accountant::GroupedLines.new(date, sums[date], counts[date])
+    data.values[0]['sums'].keys.each do |date|
+      data.keys.each do |desc|
+        next if data[desc]['counts'][date].zero?
+        grouped_lines << Accountant::GroupedLines.new(date, desc, data[desc]['sums'][date], data[desc]['counts'][date])
+      end
     end
 
     grouped_lines
@@ -71,7 +89,7 @@ class Accountant::Account < ActiveRecord::Base
 
 end
 
-class Accountant::GroupedLines < Struct.new(:date, :amount_money, :count)
+class Accountant::GroupedLines < Struct.new(:date, :description, :amount_money, :count)
 
   def amount
     Money.new(amount_money)
