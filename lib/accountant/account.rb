@@ -53,4 +53,20 @@ class Accountant::Account < ActiveRecord::Base
   def deleteable?
     lines.empty?
   end
+
+  def aggregate_lines_by_day(n_days)
+    sums = lines.group_by_day(:created_at, range: n_days.ago..Time.now).sum(:amount_money)
+    counts = lines.group_by_day(:created_at, range: n_days.ago..Time.now).count
+
+    raise "Aggregate keys do not match" if sums.keys != counts.keys
+
+    sums.keys.map do |date|
+      Accountant::GroupedLines.new(date: date, amount_money:sums[date], count: counts[date])
+    end
+  end
+
+end
+
+class Accountant::GroupedLines < Struct.new(:date, :amount_money, :count)
+  monetize :amount_money, as: 'amount'
 end
