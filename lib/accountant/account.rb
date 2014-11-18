@@ -68,6 +68,9 @@ class Accountant::Account < ActiveRecord::Base
 end
 
 class Accountant::GroupedLines < Struct.new(:date, :amount_money, :count)
-  include MoneyRails::ActiveRecord::Monetizable
-  monetize :amount_money, as: 'amount'
+
+  def amount
+    amount_money.to_money
+  end
+
 end
