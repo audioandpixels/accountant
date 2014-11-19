@@ -48,10 +48,19 @@ class Accountant::Account < ActiveRecord::Base
       end
       record || raise("Cannot find or create account with attributes #{attributes.inspect}")
     end
+
+    def check_balances
+      # TODO - recalculate and check all account balances
+    end
+
   end
 
   def deleteable?
     lines.empty?
+  end
+
+  def balance_at(date)
+    Money.new(lines.where(["created_at <= ?", date]).sum(:amount_money))
   end
 
   def aggregate_lines_by_day(n_days)
@@ -60,13 +69,13 @@ class Accountant::Account < ActiveRecord::Base
 
     grouped_lines.count.each_with_index.map do |count, i|
       next if count[1].zero?
-      Accountant::AggregateLine.new(count[0][0], count[0][1], sums[i][1], count[1])
+      Accountant::AggregateLine.new(count[0][0], count[0][1], sums[i][1], count[1], balance_at(count[0][0]))
     end.compact
   end
 
 end
 
-class Accountant::AggregateLine < Struct.new(:date, :description, :amount_money, :count)
+class Accountant::AggregateLine < Struct.new(:date, :description, :amount_money, :count, :balance)
 
   def amount
     Money.new(amount_money)
