@@ -37,16 +37,20 @@ class Accountant::Transfer
       amount, from_account, to_account = -amount, to_account, from_account
     end
 
-    add_line(-amount, from_account,   to_account, reference, description)
-    add_line( amount,   to_account, from_account, reference, description)
+    from_balance = from_account.lines.last.balance - amount
+    to_balance = to_account.lines.last.balance + amount
+
+    add_line(-amount, from_account,   to_account, reference, description, from_balance)
+    add_line( amount,   to_account, from_account, reference, description, to_balance)
   end
 
-  def add_line(amount, account, other_account, reference, description)
+  def add_line(amount, account, other_account, reference, description, balance)
     line = Accountant::Line.new(amount: amount,
                                 account: account,
                                 other_account: other_account,
                                 reference: reference,
-                                description: description)
+                                description: description,
+                                balance: balance)
 
     account.class.update_counters(account.id, line_count: 1, balance_money: line.amount_money)
 

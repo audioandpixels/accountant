@@ -59,26 +59,29 @@ class Accountant::Account < ActiveRecord::Base
     lines.empty?
   end
 
-  def balance_at(date)
-    Money.new(lines.where(["created_at <= ?", date]).sum(:amount_money))
-  end
-
   def aggregate_lines_by_day(n_days)
-    grouped_lines = lines.group_by_day(:created_at, range: n_days.days.ago..Time.now).group(:description)
-    sums = grouped_lines.sum(:amount_money).to_a
+    sql = <<-SQL
+      SELECT   (date_trunc('day', (created_at::timestamptz - interval '0 hour') at time zone 'Etc/UTC') + interval '0 hour') at time zone 'Etc/UTC' AS day,
+               description                                                                                                                          AS description,
+               count(*)                                                                                                                             AS count_all,
+               sum(accountant_lines.amount_money)                                                                                                   AS sum_amount_money
+      FROM     accountant_lines 
+      WHERE    accountant_lines.account_id = #{self.id} 
+      AND      (created_at >= '#{n_days.days.ago.beginning_of_day}' AND created_at <= '#{Time.now.utc.end_of_day}') 
+      GROUP BY (date_trunc('day', (created_at::timestamptz - interval '0 hour') at time zone 'Etc/UTC') + interval '0 hour') at time zone 'Etc/UTC',
+               description
+    SQL
 
-    grouped_lines.count.each_with_index.map do |count, i|
-      next if count[1].zero?
-      Accountant::AggregateLine.new(count[0][0], count[0][1], sums[i][1], count[1], balance_at(count[0][0]))
-    end.compact
+    grouped_lines = ActiveRecord::Base.connection.execute(sql).values
+
+    grouped_lines.map do |group|
+      Accountant::AggregateLine.new(group[0].to_date, group[1], group[2], group[3])
+    end.sort { |a, b| b.date <=> a.date }
   end
-
 end
 
-class Accountant::AggregateLine < Struct.new(:date, :description, :amount_money, :count, :balance)
-
+class Accountant::AggregateLine < Struct.new(:date, :description, :count, :amount_money, :balance)
   def amount
     Money.new(amount_money)
   end
-
 end

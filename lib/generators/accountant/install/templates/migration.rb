@@ -17,6 +17,7 @@ class CreateAccountantTables < ActiveRecord::Migration
       t.integer  "account_id",                    null: false
       t.integer  "other_account_id",              null: false
       t.integer  "amount_money",     default: 0,  null: false
+      t.integer  "balance_money",     default: 0,  null: false
       t.integer  "reference_id"
       t.string   "reference_type"
       t.string   "description"

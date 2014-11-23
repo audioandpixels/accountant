@@ -6,4 +6,5 @@ class Accountant::Line < ActiveRecord::Base
   belongs_to :reference, polymorphic: true
 
   monetize :amount_money, as: 'amount'
+  monetize :balance_money, as: 'balance'
 end
