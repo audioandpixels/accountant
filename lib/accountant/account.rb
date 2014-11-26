@@ -60,41 +60,7 @@ class Accountant::Account < ActiveRecord::Base
   end
 
   def aggregate_by_day(n_days)
-    sql = <<-SQL
-      SELECT   (date_trunc('day', (created_at::timestamptz - interval '0 hour') at time zone 'Etc/UTC') + interval '0 hour') at time zone 'Etc/UTC' AS day,
-               description                                                                                                                          AS description,
-               count(*)                                                                                                                             AS count_all,
-               sum(accountant_lines.amount_money)                                                                                                   AS sum_amount_money
-      FROM     accountant_lines 
-      WHERE    accountant_lines.account_id = #{self.id} 
-      AND      (created_at >= '#{n_days.days.ago.beginning_of_day}' AND created_at <= '#{Time.now.utc.end_of_day}') 
-      GROUP BY (date_trunc('day', (created_at::timestamptz - interval '0 hour') at time zone 'Etc/UTC') + interval '0 hour') at time zone 'Etc/UTC',
-               description
-    SQL
-
-    grouped_lines = ActiveRecord::Base.connection.execute(sql).values
-
-    grouped_lines.map! do |group|
-      Accountant::AggregateLine.new(group[0].to_date, group[1], group[2], group[3])
-    end.sort! { |a, b| b.date <=> a.date }
-
-    rolling_balance(balance, grouped_lines)
+    Accountant::AggregateLine.by_day(self.id, n_days)
   end
 
-  def rolling_balance(final_balance, grouped_lines)
-    grouped_lines.each_with_index do |grouped_line, i|
-      if i == 0 
-        grouped_line.balance = final_balance
-      else
-        grouped_line.balance = grouped_lines[i - 1].balance - grouped_lines[i - 1].amount
-      end
-    end
-  end
-
-end
-
-class Accountant::AggregateLine < Struct.new(:date, :description, :count, :amount_money, :balance)
-  def amount
-    Money.new(amount_money)
-  end
 end

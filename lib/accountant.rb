@@ -8,6 +8,7 @@ require 'accountant/version'
 require 'accountant/transfer'
 require 'accountant/account'
 require 'accountant/line'
+require 'accountant/aggregate_line'
 require 'accountant/active_record/account_extensions'
 require 'accountant/active_record/locking_extensions'
 
