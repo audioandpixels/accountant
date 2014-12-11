@@ -37,8 +37,8 @@ class Accountant::Transfer
       amount, from_account, to_account = -amount, to_account, from_account
     end
 
-    from_balance = from_account.lines.last.balance - amount
-    to_balance = to_account.lines.last.balance + amount
+    from_balance = (from_account.lines.last.try(:balance) || 0) - amount
+    to_balance = (to_account.lines.last.try(:balance) || 0) + amount
 
     add_line(-amount, from_account,   to_account, reference, description, from_balance)
     add_line( amount,   to_account, from_account, reference, description, to_balance)
