@@ -62,7 +62,7 @@ class Accountant::Account < ActiveRecord::Base
           account_id
         HAVING
           count(*) > 0
-        SQL
+      SQL
 
       Accountant::Account.find_by_sql(sql).each do |account|
         account.lock!
@@ -70,6 +70,18 @@ class Accountant::Account < ActiveRecord::Base
 
         puts "account:#{account.id}, balance:#{account.balance}"
       end
+    end
+
+    def recalculate_rolling_balances
+      sql = <<-SQL
+        UPDATE accountant_lines
+        SET    balance_money = lines.balance
+        FROM   (SELECT id, SUM(amount_money) OVER (PARTITION BY account_id ORDER BY id) AS balance 
+               FROM accountant_lines) AS lines
+        WHERE  accountant_lines.id = lines.id;
+      SQL
+
+      ActiveRecord::Base.connection.execute(sql)
     end
   end
 
