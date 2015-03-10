@@ -49,10 +49,28 @@ class Accountant::Account < ActiveRecord::Base
       record || raise("Cannot find or create account with attributes #{attributes.inspect}")
     end
 
-    def check_balances
-      # TODO - recalculate and check all account balances
-    end
+    def recalculate_balances
+      Accountant::Account.update_all(balance_money: 0)
+      
+      sql = <<-SQL
+        SELECT
+          account_id AS id,
+          sum(amount_money) AS calculated_balance
+        FROM
+          accountant_lines
+        GROUP BY
+          account_id
+        HAVING
+          count(*) > 0
+        SQL
 
+      Accountant::Account.find_by_sql(sql).each do |account|
+        account.lock!
+        account.update_attributes(balance_money: account.calculated_balance)
+
+        puts "account:#{account.id}, balance:#{account.balance}"
+      end
+    end
   end
 
   def deleteable?
