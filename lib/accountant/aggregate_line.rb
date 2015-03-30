@@ -6,9 +6,9 @@ class Accountant::AggregateLine < Struct.new(:date, :description, :count, :amoun
                description                                                                                                                          AS description,
                count(*)                                                                                                                             AS count_all,
                sum(accountant_lines.amount_money)                                                                                                   AS sum_amount_money,
-               (SELECT balance_money FROM accountant_accounts WHERE accountant_accounts.id = #{account_id} LIMIT 1)                                 AS balance_money
+               (SELECT balance_money FROM accountant_accounts WHERE accountant_accounts.id = '#{account_id}' LIMIT 1)                               AS balance_money
       FROM     accountant_lines
-      WHERE    accountant_lines.account_id = #{account_id}
+      WHERE    accountant_lines.account_id = '#{account_id}'
       AND      (created_at >= '#{n_days.days.ago.beginning_of_day}' AND created_at <= '#{Time.now.end_of_day}')
       GROUP BY day, description
       ORDER BY day DESC
