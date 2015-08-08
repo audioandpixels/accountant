@@ -3,11 +3,6 @@ module Accountant
     module AccountExtensions
       def self.included(base)
         base.extend ClassMethods
-        base.class_eval do
-          def account(name=:default)
-            __send__("#{name}_account") || __send__("create_#{name}_account", name: name.to_s)
-          end
-        end
       end
 
       module ClassMethods
@@ -28,6 +23,12 @@ module Accountant
               self.account_config[:"#{holder_type.downcase}_#{name}"]
             end
           end
+
+          class_eval do
+            def account(name=:default)
+              __send__("#{name}_account") || __send__("create_#{name}_account", name: name.to_s)
+            end
+          end
         end
 
         def is_reference
@@ -35,14 +36,6 @@ module Accountant
           class_eval do
             def booked?
               lines.any?
-            end
-          end
-        end
-
-        def has_global_account(name)
-          class_eval do
-            def account
-              Accountant::Account.for(name.to_sym)
             end
           end
         end
