@@ -28,7 +28,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'database_cleaner'
   spec.add_development_dependency 'pry'
 
-  spec.add_dependency 'money-rails',           '~> 0.12.0'
+  spec.add_dependency 'money-rails',           '~> 1.4.0'
   spec.add_dependency 'activerecord',          '>= 4.0.0'
   spec.add_dependency 'activesupport',         '>= 4.0.0'
   spec.add_dependency 'railties',              '>= 4.0.0'
